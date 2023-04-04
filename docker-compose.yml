@@ -10,6 +10,10 @@ services:
     ports:
       - "7862:7862"
       - "7863:7863"
+    runtime: nvidia
+    environment:
+      - gpus=all
+    command: nvidia-smi
 #    command: nvidia-smi
 #    deploy:
 #      resources:
