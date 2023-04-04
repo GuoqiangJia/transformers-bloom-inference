@@ -1,0 +1,12 @@
+version: '3'
+services:
+  bloom-inference:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: bloomz-api:latest
+    container_name: bloomz-api-container
+    restart: always
+    ports:
+      - "7870:7870"
+      - "7871:7871"
