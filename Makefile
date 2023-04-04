@@ -11,7 +11,7 @@ gen-proto:
 	rm -rf inference_server/model_handler/grpc_utils/pb/*.py-e
 
 ui:
-	python -m ui --ui_host 0.0.0.0 --ui_port 7863 --generation_backend_host 127.0.0.1 --generation_backend_port 7862 &
+	python -m ui --ui_host 0.0.0.0 --ui_port $(UI_PORT) --generation_backend_host 127.0.0.1 --generation_backend_port $(BAK_PORT) &
 
 # ------------------------- DS inference -------------------------
 bloom-176b:
@@ -69,7 +69,7 @@ bloom-176b-int8:
 
 # ------------------------- HF accelerate -------------------------
 bloom-560m:
-	make ui
+	BAK_PORT=$(BAK_PORT) UI_PORT=$(UI_PORT) make ui
 
 	TOKENIZERS_PARALLELISM=false \
 	MODEL_NAME=bigscience/bloom-560m \
@@ -79,7 +79,7 @@ bloom-560m:
 	MAX_INPUT_LENGTH=2048 \
 	MAX_BATCH_SIZE=32 \
 	CUDA_VISIBLE_DEVICES=1,2,3 \
-	gunicorn -t 0 -w 1 -b 0.0.0.0:7862 inference_server.server:app --access-logfile - --access-logformat '%(h)s %(t)s "%(r)s" %(s)s %(b)s'
+	gunicorn -t 0 -w 1 -b 0.0.0.0:$(BAK_PORT) inference_server.server:app --access-logfile - --access-logformat '%(h)s %(t)s "%(r)s" %(s)s %(b)s'
 
 # ------------------------- HF CPU -------------------------
 bloom-560m-cpu:
