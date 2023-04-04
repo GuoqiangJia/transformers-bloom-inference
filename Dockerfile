@@ -60,7 +60,9 @@ ENV PORT=7862 \
 EXPOSE ${PORT}
 EXPOSE ${UI_PORT}
 
-COPY . /src
+RUN mkdir /src/transformers-bloom-inference
+    chmod -R g+w /src/transformers-bloom-inference
+COPY . /src/transformers-bloom-inference
 CMD cd transformers-bloom-inference && \
     # install grpc and compile protos
     make gen-proto && \
