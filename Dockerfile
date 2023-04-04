@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.6.1-devel-ubi8 as base
+FROM nvidia/cuda:12.0.0-devel-ubi8 as base
 
 RUN dnf install -y --disableplugin=subscription-manager make git && dnf clean all --disableplugin=subscription-manager
 
