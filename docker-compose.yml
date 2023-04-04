@@ -4,6 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    runtime: nvidia
     image: bloomz-api:latest
     container_name: bloomz-api-container
     restart: always
