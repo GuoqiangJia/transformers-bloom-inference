@@ -91,4 +91,4 @@ bloom-560m-cpu:
 	DTYPE=fp32 \
 	MAX_INPUT_LENGTH=2048 \
 	MAX_BATCH_SIZE=32 \
-	gunicorn -t 0 -w 1 -b 127.0.0.1:7862 inference_server.server:app --access-logfile - --access-logformat '%(h)s %(t)s "%(r)s" %(s)s %(b)s'
+	gunicorn -t 0 -w 1 -b 0.0.0.0:7862 inference_server.server:app --access-logfile - --access-logformat '%(h)s %(t)s "%(r)s" %(s)s %(b)s'
