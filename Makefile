@@ -11,7 +11,7 @@ gen-proto:
 	rm -rf inference_server/model_handler/grpc_utils/pb/*.py-e
 
 ui:
-	python -m ui --ui_host 0.0.0.0 --ui_port 7871 --generation_backend_host 0.0.0.0 --generation_backend_port 7870 &
+	python -m ui --ui_host 0.0.0.0 --ui_port 7863 --generation_backend_host 127.0.0.1 --generation_backend_port 7862 &
 
 # ------------------------- DS inference -------------------------
 bloom-176b:
@@ -79,46 +79,7 @@ bloom-560m:
 	MAX_INPUT_LENGTH=2048 \
 	MAX_BATCH_SIZE=32 \
 	CUDA_VISIBLE_DEVICES=1,2,3 \
-	gunicorn -t 0 -w 1 -b 0.0.0.0:7870 inference_server.server:app --access-logfile - --access-logformat '%(h)s %(t)s "%(r)s" %(s)s %(b)s'
-
-flan-t5-xxl:
-	make ui
-
-	TOKENIZERS_PARALLELISM=false \
-	MODEL_NAME=google/flan-t5-xxl \
-	MODEL_CLASS=AutoModelForSeq2SeqLM \
-	DEPLOYMENT_FRAMEWORK=hf_accelerate \
-	DTYPE=bf16 \
-	MAX_INPUT_LENGTH=2048 \
-	MAX_BATCH_SIZE=4 \
-	CUDA_VISIBLE_DEVICES=0 \
-	gunicorn -t 0 -w 1 -b 127.0.0.1:5000 inference_server.server:app --access-logfile - --access-logformat '%(h)s %(t)s "%(r)s" %(s)s %(b)s'
-
-ul2:
-	make ui
-
-	TOKENIZERS_PARALLELISM=false \
-	MODEL_NAME=google/ul2 \
-	MODEL_CLASS=AutoModelForSeq2SeqLM \
-	DEPLOYMENT_FRAMEWORK=hf_accelerate \
-	DTYPE=bf16 \
-	MAX_INPUT_LENGTH=2048 \
-	MAX_BATCH_SIZE=4 \
-	CUDA_VISIBLE_DEVICES=0 \
-	gunicorn -t 0 -w 1 -b 127.0.0.1:5000 inference_server.server:app --access-logfile - --access-logformat '%(h)s %(t)s "%(r)s" %(s)s %(b)s'
-
-codegen-mono:
-	make ui
-
-	TOKENIZERS_PARALLELISM=false \
-	MODEL_NAME=Salesforce/codegen-16B-mono \
-	MODEL_CLASS=AutoModelForCausalLM \
-	DEPLOYMENT_FRAMEWORK=hf_accelerate \
-	DTYPE=bf16 \
-	MAX_INPUT_LENGTH=2048 \
-	MAX_BATCH_SIZE=4 \
-	CUDA_VISIBLE_DEVICES=0 \
-	gunicorn -t 0 -w 1 -b 127.0.0.1:5000 inference_server.server:app --access-logfile - --access-logformat '%(h)s %(t)s "%(r)s" %(s)s %(b)s'
+	gunicorn -t 0 -w 1 -b 0.0.0.0:7862 inference_server.server:app --access-logfile - --access-logformat '%(h)s %(t)s "%(r)s" %(s)s %(b)s'
 
 # ------------------------- HF CPU -------------------------
 bloom-560m-cpu:
@@ -128,17 +89,6 @@ bloom-560m-cpu:
 	MODEL_CLASS=AutoModelForCausalLM \
 	DEPLOYMENT_FRAMEWORK=hf_cpu \
 	DTYPE=fp32 \
-	MAX_INPUT_LENGTH=2048 \
-	MAX_BATCH_SIZE=32 \
-	gunicorn -t 0 -w 1 -b 127.0.0.1:5000 inference_server.server:app --access-logfile - --access-logformat '%(h)s %(t)s "%(r)s" %(s)s %(b)s'
-
-flan-t5-base-cpu:
-	make ui
-
-	MODEL_NAME=google/flan-t5-base \
-	MODEL_CLASS=AutoModelForSeq2SeqLM \
-	DEPLOYMENT_FRAMEWORK=hf_cpu \
-	DTYPE=bf16 \
 	MAX_INPUT_LENGTH=2048 \
 	MAX_BATCH_SIZE=32 \
 	gunicorn -t 0 -w 1 -b 127.0.0.1:5000 inference_server.server:app --access-logfile - --access-logformat '%(h)s %(t)s "%(r)s" %(s)s %(b)s'
