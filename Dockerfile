@@ -60,7 +60,7 @@ ENV PORT=7862 \
 EXPOSE ${PORT}
 EXPOSE ${UI_PORT}
 
-RUN mkdir /src/transformers-bloom-inference
+RUN mkdir /src/transformers-bloom-inference \
     chmod -R g+w /src/transformers-bloom-inference
 COPY . /src/transformers-bloom-inference
 CMD cd transformers-bloom-inference && \
