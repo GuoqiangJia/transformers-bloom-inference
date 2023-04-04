@@ -55,8 +55,8 @@ RUN chmod -R g+w /src
 RUN mkdir /.cache && \
     chmod -R g+w /.cache
 
-ENV PORT=5000 \
-    UI_PORT=5001
+ENV PORT=7862 \
+    UI_PORT=7863
 EXPOSE ${PORT}
 EXPOSE ${UI_PORT}
 
@@ -64,4 +64,4 @@ CMD git clone https://github.com/huggingface/transformers-bloom-inference.git &&
     cd transformers-bloom-inference && \
     # install grpc and compile protos
     make gen-proto && \
-    make bloom-560m BAK_PORT=7862 UI_PORT=7863
+    make bloom-560m
