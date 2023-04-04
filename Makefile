@@ -67,6 +67,19 @@ bloom-176b-int8:
 	CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
 	gunicorn -t 0 -w 1 -b 127.0.0.1:5000 inference_server.server:app --access-logfile - --access-logformat '%(h)s %(t)s "%(r)s" %(s)s %(b)s'
 
+bloom-mt0-xxl-mt:
+	make ui
+
+	TOKENIZERS_PARALLELISM=false \
+	MODEL_NAME=bigscience/mt0-xxl-mt \
+	MODEL_CLASS=AutoModelForCausalLM \
+	DEPLOYMENT_FRAMEWORK=ds_inference \
+	DTYPE=fp16 \
+	MAX_INPUT_LENGTH=2048 \
+	MAX_BATCH_SIZE=8 \
+	CUDA_VISIBLE_DEVICES=1,2,3 \
+	gunicorn -t 30 -w 4 -b 0.0.0.0:7862 inference_server.server:app --access-logfile /src/logs/access.log --error-logfile /src/logs/error.log --access-logformat '%(h)s %(t)s "%(r)s" %(s)s %(b)s'
+
 # ------------------------- HF accelerate -------------------------
 bloom-560m:
 	make ui

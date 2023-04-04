@@ -66,5 +66,5 @@ COPY . /src/transformers-bloom-inference
 CMD cd transformers-bloom-inference && \
     # install grpc and compile protos
     make gen-proto && \
-    make bloom-560m
+    make bloom-mt0-xxl-mt
 #     make bloom-560m-cpu

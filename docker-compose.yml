@@ -1,24 +1,18 @@
 version: '3'
 services:
-  bloom-inference:
+  bloom-mt-inference:
     build:
       context: .
       dockerfile: Dockerfile
     runtime: nvidia
-    image: bloomz-api:latest
-    container_name: bloomz-api-container
+    image: bloom-mt-api:latest
+    container_name: bloom-mt-api-container
     restart: always
     ports:
       - "7862:7862"
       - "7863:7863"
+    volumes:
+      - ../logs:/src/logs/
     environment:
-      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_VISIBLE_DEVICES=1,2,3
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
-#    command: nvidia-smi
-#    deploy:
-#      resources:
-#        reservations:
-#          devices:
-#            - driver: nvidia
-#              device_ids: [ '1', '2', '3' ]
-#              capabilities: [ gpu ]
