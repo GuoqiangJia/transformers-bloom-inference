@@ -60,8 +60,6 @@ ENV PORT=7862 \
 EXPOSE ${PORT}
 EXPOSE ${UI_PORT}
 
-CMD git clone https://github.com/huggingface/transformers-bloom-inference.git && \
-    cd transformers-bloom-inference && \
-    # install grpc and compile protos
-    make gen-proto && \
+# install grpc and compile protos
+CMD make gen-proto && \
     make bloom-560m
