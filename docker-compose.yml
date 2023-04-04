@@ -10,11 +10,11 @@ services:
     ports:
       - "7862:7862"
       - "7863:7863"
-    command: nvidia-smi
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              device_ids: [ '1', '2', '3' ]
-              capabilities: [ gpu ]
+#    command: nvidia-smi
+#    deploy:
+#      resources:
+#        reservations:
+#          devices:
+#            - driver: nvidia
+#              device_ids: [ '1', '2', '3' ]
+#              capabilities: [ gpu ]
