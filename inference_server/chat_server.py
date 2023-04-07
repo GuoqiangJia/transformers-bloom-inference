@@ -4,10 +4,10 @@ from flask import Flask, request
 from flask_api import status
 from langchain import PromptTemplate, ConversationChain
 from langchain.memory import RedisChatMessageHistory, ConversationBufferMemory
-from chatbot import Bloom, Profile
+from .chatbot import Bloom, Profile
 import opencc
 import ast
-from constants import redis_url
+from .constants import redis_url
 
 llm = Bloom()
 llm.build_extra({'temperature': 1, "top_k": 100, "top_p": 1, "max_new_tokens": 100, "repetition_penalty": 3})
@@ -87,5 +87,5 @@ def chat():
     return response, status.HTTP_200_OK
 
 
-if __name__ == '__main__':
-    app.run(host='localhost', port=3000)
+# if __name__ == '__main__':
+#     app.run(host='localhost', port=3000)

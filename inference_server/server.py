@@ -119,7 +119,7 @@ def forward():
         return response, status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
-from chatbot import Bloom, Profile
+from .chatbot import Bloom, Profile
 import opencc
 import ast
 import json
