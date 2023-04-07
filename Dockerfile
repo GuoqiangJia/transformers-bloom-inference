@@ -38,6 +38,8 @@ RUN pip install torch==1.12.1+cu116 --extra-index-url https://download.pytorch.o
     pydantic==1.10.2 \
     huggingface_hub==0.12.1 \
 	grpcio-tools==1.50.0 \
+	langchain==0.0.132 \
+	OpenCC
     --no-cache-dir
 
 # clean conda env
