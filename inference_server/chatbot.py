@@ -8,8 +8,8 @@ from langchain.llms.base import LLM
 from langchain.memory import ConversationBufferMemory, RedisChatMessageHistory
 from pydantic import BaseModel, root_validator
 from pydantic import Extra
-from constants import redis_url
-from constants import inference_url
+from .constants import redis_url
+from .constants import inference_url
 
 logger = logging.getLogger(__name__)
 
