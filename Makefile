@@ -71,7 +71,8 @@ bloom-mt0-xxl-mt:
 	make ui
 
 	TOKENIZERS_PARALLELISM=false \
-	MODEL_NAME=bigscience/mt0-xxl-mt \
+#	MODEL_NAME=bigscience/mt0-xxl-mt \
+	MODEL_NAME='/home/bruce/transformer-models/mt0-xxl-mt' \
 	MODEL_CLASS=AutoModelForSeq2SeqLM \
 	DEPLOYMENT_FRAMEWORK=hf_accelerate \
 	DTYPE=bf16 \
