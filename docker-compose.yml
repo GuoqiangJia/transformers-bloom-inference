@@ -1,11 +1,11 @@
 version: '3'
 services:
   bloom-mt-inference:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-    runtime: nvidia
-    image: bloom-mt-api-latest-v2
+    build:
+      context: .
+      dockerfile: Dockerfile
+#    runtime: nvidia
+    image: bloom-mt-api-latest
     container_name: bloom-mt-api-container
     restart: always
     ports:
