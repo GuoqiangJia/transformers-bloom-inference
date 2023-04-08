@@ -72,7 +72,6 @@ bloom-mt0-xxl-mt:
 
 	TOKENIZERS_PARALLELISM=false \
 	MODEL_NAME=bigscience/mt0-xxl-mt \
-#	MODEL_NAME='/src/mt0-xxl-mt/' \
 	MODEL_CLASS=AutoModelForSeq2SeqLM \
 	DEPLOYMENT_FRAMEWORK=hf_accelerate \
 	DTYPE=bf16 \
