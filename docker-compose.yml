@@ -5,7 +5,7 @@ services:
 #      context: .
 #      dockerfile: Dockerfile
     runtime: nvidia
-    image: bloom-mt-api-latest-v1
+    image: bloom-mt-api-latest-v2
     container_name: bloom-mt-api-container
     restart: always
     ports:
