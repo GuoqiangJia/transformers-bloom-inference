@@ -13,7 +13,7 @@ services:
       - "7863:7863"
     volumes:
       - ../logs:/src/logs/
-      - ../transformer-models/mt0-xxl-mt:/src/mt0-xxl-mt/
+#      - ../transformer-models/mt0-xxl-mt:/src/mt0-xxl-mt/
     environment:
       - NVIDIA_VISIBLE_DEVICES=0,1
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
