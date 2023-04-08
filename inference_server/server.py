@@ -21,6 +21,11 @@ from .utils import (
     run_and_log_time,
 )
 
+from .chatbot import Bloom, Profile
+import opencc
+import ast
+import json
+
 
 class QueryID(BaseModel):
     generate_query_id: int = 0
@@ -48,8 +53,13 @@ model = ModelDeployment(args, True)
 query_ids = QueryID()
 app = Flask(__name__)
 
-
 # ------------------------------------------------------
+
+
+llm = Bloom()
+llm.build_extra({'temperature': 1, "top_k": 100, "top_p": 1, "max_new_tokens": 100, "repetition_penalty": 3})
+converter_t2s = opencc.OpenCC('t2s.json')
+converter_s2t = opencc.OpenCC('s2t.json')
 
 
 @app.route("/query_id/", methods=["GET"])
@@ -117,20 +127,6 @@ def forward():
         response = get_exception_response(query_ids.forward_query_id, args.debug)
         query_ids.forward_query_id += 1
         return response, status.HTTP_500_INTERNAL_SERVER_ERROR
-
-
-from .chatbot import Bloom, Profile
-import opencc
-import ast
-import json
-
-llm = Bloom()
-llm.build_extra({'temperature': 1, "top_k": 100, "top_p": 1, "max_new_tokens": 100, "repetition_penalty": 3})
-
-app = Flask(__name__)
-
-converter_t2s = opencc.OpenCC('t2s.json')
-converter_s2t = opencc.OpenCC('s2t.json')
 
 
 @app.route("/profile/", methods=["POST"])
