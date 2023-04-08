@@ -200,3 +200,8 @@ def chat():
     r = converter_s2t.convert(r)
     response = {"text": r, "session_id": session_id}
     return response, status.HTTP_200_OK
+
+
+@app.route("/hello/", methods=["GET"])
+def hello():
+    return {"text": "I am still here."}
