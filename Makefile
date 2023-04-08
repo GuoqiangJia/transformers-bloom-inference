@@ -77,7 +77,7 @@ bloom-mt0-xxl-mt:
 	DTYPE=bf16 \
 	MAX_INPUT_LENGTH=2048 \
 	MAX_BATCH_SIZE=8 \
-	CUDA_VISIBLE_DEVICES=0,1,2 \
+	CUDA_VISIBLE_DEVICES=0,1 \
 	gunicorn -t 0 -w 1 -b 0.0.0.0:7862 inference_server.server:app --access-logfile /src/logs/access.log --error-logfile /src/logs/error.log --access-logformat '%(h)s %(t)s "%(r)s" %(s)s %(b)s'
 
 # ------------------------- HF accelerate -------------------------
