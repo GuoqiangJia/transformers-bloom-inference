@@ -158,7 +158,7 @@ class Bloom(LLM, BaseModel):
         response, total_time_taken = run_and_log_time(partial(model.generate, request=x))
         logger.info(type(response))
         logger.info(response)
-        return response
+        return response.text[0]
 
 
 class Profile(object):
@@ -223,8 +223,6 @@ app = Flask(__name__)
 # ------------------------------------------------------
 
 
-llm = Bloom()
-llm.build_extra({'temperature': 1, "top_k": 100, "top_p": 1, "max_new_tokens": 100, "repetition_penalty": 3})
 converter_t2s = opencc.OpenCC('t2s.json')
 converter_s2t = opencc.OpenCC('s2t.json')
 
@@ -356,6 +354,16 @@ def chat():
     history = RedisChatMessageHistory(session_id=session_id, url=redis_url)
     memory = ConversationBufferMemory(memory_key="history", input_key="input", chat_memory=history)
     logger.info(f'debug info {memory.buffer}')
+
+    llm = Bloom()
+    temperature = 1 if not x['temperature'] else x['temperature']
+    top_k = 100 if not x['top_k'] else x['top_k']
+    top_p = 1 if not x['top_p'] else x['top_p']
+    max_new_tokens = 100 if not x['max_new_tokens'] else x['max_new_tokens']
+    repetition_penalty = 3 if not x['repetition_penalty'] else x['repetition_penalty']
+    llm.build_extra({'temperature': temperature, "top_k": top_k, "top_p": top_p,
+                     "max_new_tokens": max_new_tokens, "repetition_penalty": repetition_penalty})
+
     conversation = ConversationChain(
         llm=llm,
         verbose=False,
