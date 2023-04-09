@@ -30,6 +30,13 @@ import opencc
 import ast
 import json
 
+log_name = '/src/logs/server.log'
+logging.basicConfig(filename=log_name,
+                    filemode='a',
+                    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+                    datefmt='%H:%M:%S',
+                    level=logging.DEBUG)
+
 logger = logging.getLogger(__name__)
 
 
