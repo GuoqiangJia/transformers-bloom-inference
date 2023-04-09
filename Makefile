@@ -85,7 +85,7 @@ bloom-560m:
 	make ui
 
 	TOKENIZERS_PARALLELISM=false \
-	MODEL_NAME=bigscience/bloom-560m \
+	MODEL_NAME="/src/bloom-560m/"
 	MODEL_CLASS=AutoModelForCausalLM \
 	DEPLOYMENT_FRAMEWORK=hf_accelerate \
 	DTYPE=bf16 \
@@ -98,7 +98,7 @@ bloom-560m:
 bloom-560m-cpu:
 	make ui
 
-	MODEL_NAME=bigscience/bloom-560m \
+	MODEL_NAME="/src/bloom-560m/" \
 	MODEL_CLASS=AutoModelForCausalLM \
 	DEPLOYMENT_FRAMEWORK=hf_cpu \
 	DTYPE=fp32 \

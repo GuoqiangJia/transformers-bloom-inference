@@ -13,7 +13,7 @@ services:
       - "7863:7863"
     volumes:
       - ../logs:/src/logs/
-#      - ../transformer-models/mt0-xxl-mt:/src/mt0-xxl-mt/
+      - ../bloom-models/bloom-560m:/src/bloom-560m/
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility

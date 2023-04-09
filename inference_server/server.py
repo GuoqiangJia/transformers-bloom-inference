@@ -208,4 +208,5 @@ def chat():
 
 @app.route("/hello/", methods=["GET"])
 def hello():
+    logger.info('enter chat hello')
     return {"text": "I am still here."}
