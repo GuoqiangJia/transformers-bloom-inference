@@ -135,7 +135,7 @@ class Bloom(LLM, BaseModel):
         return "bloom"
 
     def _call(self, prompt: str, stop: Optional[List[str]] = None) -> str:
-        data = {
+        x = {
             "text": [prompt],
             "temperature": self.temperature,
             "top_k": self.top_k,
@@ -143,13 +143,22 @@ class Bloom(LLM, BaseModel):
             "max_new_tokens": self.max_length,
             "repetition_penalty": self.repetition_penalty
         }
+        #
+        # response = requests.post(inference_url, json=data)
+        # if response.status_code == 200:
+        #     result = json.loads(response.content)['text']
+        #     if len(result) > 0:
+        #         return result[0]
+        # return ''
 
-        response = requests.post(inference_url, json=data)
-        if response.status_code == 200:
-            result = json.loads(response.content)['text']
-            if len(result) > 0:
-                return result[0]
-        return ''
+        x = GenerateRequest(**x)
+
+        x.max_new_tokens = get_num_tokens_to_generate(x.max_new_tokens, args.allowed_max_new_tokens)
+
+        response, total_time_taken = run_and_log_time(partial(model.generate, request=x))
+        logger.info(type(response))
+        logger.info(response)
+        return response
 
 
 class Profile(object):
