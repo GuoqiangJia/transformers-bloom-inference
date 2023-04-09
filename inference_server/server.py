@@ -362,8 +362,14 @@ def chat():
     top_p = 1 if 'top_p' not in x else x['top_p']
     max_new_tokens = 100 if 'max_new_tokens' not in x else x['max_new_tokens']
     repetition_penalty = 3 if 'repetition_penalty' not in x else x['repetition_penalty']
+    num_beams = 1 if 'num_beams' not in x else x['num_beams']
+    length_penalty = 1.0 if 'length_penalty' not in x else x['length_penalty']
+    num_return_sequences = 1 if 'num_return_sequences' not in x else x['num_return_sequences']
+    min_length = 1 if 'min_length' not in x else x['min_length']
     llm.build_extra({'temperature': temperature, "top_k": top_k, "top_p": top_p,
-                     "max_new_tokens": max_new_tokens, "repetition_penalty": repetition_penalty})
+                     "max_new_tokens": max_new_tokens, "repetition_penalty": repetition_penalty,
+                     "num_beams": num_beams, "length_penalty": length_penalty,
+                     "num_return_sequences":num_return_sequences, "min_length": min_length})
 
     conversation = ConversationChain(
         llm=llm,
