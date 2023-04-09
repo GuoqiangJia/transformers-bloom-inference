@@ -1,19 +1,19 @@
 version: '3'
 services:
-  bloom-mt-inference:
+  bloom-xp3mt-inference:
     build:
       context: .
       dockerfile: Dockerfile
     runtime: nvidia
-    image: bloom-mt-api-latest
-    container_name: bloom-mt-api-container
+    image: bloom-xp3mt-api-latest
+    container_name: bloom-xp3mt-api-container
     restart: always
     ports:
       - "7862:7862"
       - "7863:7863"
     volumes:
       - ../logs:/src/logs/
-      - ../bloom-models/bloom-560m:/src/bloom-560m/
+#      - ../bloom-models/bloom-560m:/src/bloom-560m/
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
