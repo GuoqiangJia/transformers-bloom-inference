@@ -1,3 +1,4 @@
+import logging
 import os
 from functools import partial
 
@@ -26,6 +27,7 @@ import opencc
 import ast
 import json
 
+logger = logging.getLogger(__name__)
 
 class QueryID(BaseModel):
     generate_query_id: int = 0
@@ -142,6 +144,7 @@ def profile():
 
 @app.route("/chat/", methods=["POST"])
 def chat():
+    logger.info('enter chat endpoint')
     x = request.get_json()
     x = converter_t2s.convert(str(x))
     x = ast.literal_eval(x)
@@ -155,8 +158,11 @@ def chat():
         raise Exception("no chat text specified.")
 
     request_text = request_text[0]
+    logger.info(f'debug info {request_text}')
 
     profile = Profile(session_id, url=redis_url)
+    logger.info(f'debug info {profile}')
+
     profile_values = json.loads(profile.values.decode("utf-8"))
     profile_express = []
     for p in profile_values:
@@ -170,7 +176,7 @@ def chat():
         pre_template = pre_template + "，" + p
 
     pre_template = pre_template + "。\n"
-    print(pre_template)
+    logger.info(f'debug info {pre_template}')
     template = pre_template + """
 
         {history}
@@ -184,7 +190,7 @@ def chat():
 
     history = RedisChatMessageHistory(session_id=session_id, url=redis_url)
     memory = ConversationBufferMemory(memory_key="history", input_key="input", chat_memory=history)
-    print(memory.buffer)
+    logger.info(f'debug info {memory.buffer}')
     conversation = ConversationChain(
         llm=llm,
         verbose=False,
@@ -195,6 +201,8 @@ def chat():
     r = conversation.predict(input=request_text)
     r = converter_s2t.convert(r)
     response = {"text": r, "session_id": session_id}
+
+    logger.info(f'debug info {response}')
     return response, status.HTTP_200_OK
 
 
