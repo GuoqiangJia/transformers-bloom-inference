@@ -11,7 +11,7 @@ gen-proto:
 	rm -rf inference_server/model_handler/grpc_utils/pb/*.py-e
 
 ui:
-	python -m ui --ui_host 0.0.0.0 --ui_port 7866 --generation_backend_host 127.0.0.1 --generation_backend_port 7865 &
+	python -m ui --ui_host 0.0.0.0 --ui_port 7867 --generation_backend_host 127.0.0.1 --generation_backend_port 7865 &
 
 # ------------------------- DS inference -------------------------
 bloom-176b:
