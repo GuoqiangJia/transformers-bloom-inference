@@ -1,6 +1,5 @@
 import logging
 import os
-import requests
 from functools import partial
 from typing import Any, List, Dict, Mapping, Optional
 
@@ -13,7 +12,6 @@ from pydantic import BaseModel, Extra, root_validator
 
 from .constants import redis_url
 from .constants import HF_ACCELERATE
-from .constants import inference_url
 from .model_handler.deployment import ModelDeployment
 from .utils import (
     ForwardRequest,
@@ -103,9 +101,13 @@ class Bloom(LLM, BaseModel):
         values["model_kwargs"] = extra
         return values
 
+    def replace_params(self, params: Dict[str, Any]):
+        for key, value in params.items():
+            setattr(self, key, value)
+
     @property
     def _default_params(self) -> Mapping[str, Any]:
-        """Get the default parameters for calling NLPCloud API."""
+        """Get the default parameters for calling Model."""
         return {
             "temperature": self.temperature,
             "min_length": self.min_length,
@@ -141,15 +143,12 @@ class Bloom(LLM, BaseModel):
             "top_k": self.top_k,
             "top_p": self.top_p,
             "max_new_tokens": self.max_length,
-            "repetition_penalty": self.repetition_penalty
+            "repetition_penalty": self.repetition_penalty,
+            "num_beams": self.num_beams,
+            "length_penalty": self.length_penalty,
+            "num_return_sequences": self.num_return_sequences,
+            "min_length": self.min_length
         }
-        #
-        # response = requests.post(inference_url, json=data)
-        # if response.status_code == 200:
-        #     result = json.loads(response.content)['text']
-        #     if len(result) > 0:
-        #         return result[0]
-        # return ''
 
         x = GenerateRequest(**x)
 
@@ -366,10 +365,10 @@ def chat():
     length_penalty = 1.0 if 'length_penalty' not in x else x['length_penalty']
     num_return_sequences = 1 if 'num_return_sequences' not in x else x['num_return_sequences']
     min_length = 1 if 'min_length' not in x else x['min_length']
-    llm.build_extra({'temperature': temperature, "top_k": top_k, "top_p": top_p,
+    llm.replace_params({'temperature': temperature, "top_k": top_k, "top_p": top_p,
                      "max_new_tokens": max_new_tokens, "repetition_penalty": repetition_penalty,
                      "num_beams": num_beams, "length_penalty": length_penalty,
-                     "num_return_sequences":num_return_sequences, "min_length": min_length})
+                     "num_return_sequences": num_return_sequences, "min_length": min_length})
 
     conversation = ConversationChain(
         llm=llm,
