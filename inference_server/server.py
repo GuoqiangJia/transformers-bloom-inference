@@ -357,11 +357,11 @@ def chat():
 
     llm = Bloom()
     logger.info(x)
-    temperature = 1 if not x.has_key('temperature') else x['temperature']
-    top_k = 100 if not x.has_key('top_k') else x['top_k']
-    top_p = 1 if not x.has_key('top_p') else x['top_p']
-    max_new_tokens = 100 if not x.has_key('max_new_tokens') else x['max_new_tokens']
-    repetition_penalty = 3 if not x.has_key('repetition_penalty') else x['repetition_penalty']
+    temperature = 1 if 'temperature' not in x else x['temperature']
+    top_k = 100 if 'top_k' not in x else x['top_k']
+    top_p = 1 if 'top_p' not in x else x['top_p']
+    max_new_tokens = 100 if 'max_new_tokens' not in x else x['max_new_tokens']
+    repetition_penalty = 3 if 'repetition_penalty' not in x else x['repetition_penalty']
     llm.build_extra({'temperature': temperature, "top_k": top_k, "top_p": top_p,
                      "max_new_tokens": max_new_tokens, "repetition_penalty": repetition_penalty})
 
