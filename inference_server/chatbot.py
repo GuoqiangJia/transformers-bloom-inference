@@ -3,9 +3,7 @@ import logging
 from typing import List, Optional, Any, Mapping, Dict
 
 import requests
-from langchain import ConversationChain, PromptTemplate
 from langchain.llms.base import LLM
-from langchain.memory import ConversationBufferMemory, RedisChatMessageHistory
 from pydantic import BaseModel, root_validator
 from pydantic import Extra
 from .constants import redis_url
@@ -157,40 +155,3 @@ class Profile(object):
     def clear(self) -> None:
         """Clear session memory from Redis"""
         self.redis_client.delete(self.key)
-
-
-if __name__ == '__main__':
-    llm = Bloom()
-    llm.build_extra({'temperature': 1, "top_k": 100, "top_p": 1, "max_new_tokens": 100, "repetition_penalty": 3})
-
-    name = "小丽"
-    height = "1.70米"
-    cup = "C罩杯"
-    birthday = "1984年10月3日"
-    character = "活泼可爱的"
-
-    pre_template = f"你是一个负责和人类聊天的AI虚拟女朋友，你的名字叫做{name}，你的身高是{height}，你的胸围是{cup}，你的生日是{birthday}，你的性格是{character}。\n"
-
-    template = pre_template + """
-    
-    {history}
-    Human: {input}
-    AI:"""
-
-    prompt = PromptTemplate(
-        input_variables=["history", "input"],
-        template=template
-    )
-
-    history = RedisChatMessageHistory(session_id='chat-0002', url=redis_url)
-    memory = ConversationBufferMemory(memory_key="history", input_key="input", chat_memory=history)
-    print(memory.buffer)
-    conversation = ConversationChain(
-        llm=llm,
-        verbose=False,
-        prompt=prompt,
-        memory=memory
-    )
-
-    r = conversation.predict(input="好的，昨天我去了哪里啊？")
-    print(r)
