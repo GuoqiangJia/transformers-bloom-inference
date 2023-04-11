@@ -151,6 +151,7 @@ class Bloom(LLM, BaseModel):
             "min_length": self.min_length
         }
 
+        logger.info('_call x: ' + json.dumps(x))
         x = GenerateRequest(**x)
 
         x.max_new_tokens = get_num_tokens_to_generate(x.max_new_tokens, args.allowed_max_new_tokens)
