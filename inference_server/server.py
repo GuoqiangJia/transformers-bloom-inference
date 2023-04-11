@@ -154,7 +154,7 @@ class Bloom(LLM, BaseModel):
         x = GenerateRequest(**x)
 
         x.max_new_tokens = get_num_tokens_to_generate(x.max_new_tokens, args.allowed_max_new_tokens)
-
+        logger.info('generate request: ' + x)
         response, total_time_taken = run_and_log_time(partial(model.generate, request=x))
         logger.info(type(response))
         logger.info(response)
@@ -319,6 +319,7 @@ def chat_history(session_id):
 def chat():
     logger.info('enter chat endpoint')
     x = request.get_json()
+    logger.info('request: ' + x)
     x = converter_t2s.convert(str(x))
     x = ast.literal_eval(x)
     session_id = x["session_id"]

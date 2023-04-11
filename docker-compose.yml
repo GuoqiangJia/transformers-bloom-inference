@@ -1,12 +1,12 @@
 version: '3'
 services:
-  bloom-xp3mt-inference:
+  bloom-xp3mt-inference-debug:
     build:
       context: .
       dockerfile: Dockerfile
     runtime: nvidia
-    image: bloom-xp3mt-api-latest
-    container_name: bloom-xp3mt-api-container
+    image: bloom-xp3mt-api-latest-debug
+    container_name: bloom-xp3mt-api-container-debug
     restart: always
     ports:
       - "7862:7862"

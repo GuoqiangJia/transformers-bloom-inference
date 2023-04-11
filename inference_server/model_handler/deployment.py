@@ -3,6 +3,7 @@ Copyright 2022 The Microsoft DeepSpeed Team
 """
 import argparse
 import asyncio
+import logging
 import subprocess
 import time
 from typing import List
@@ -24,6 +25,15 @@ from ..utils import (
     print_rank_0,
 )
 from .grpc_utils.pb import generation_pb2, generation_pb2_grpc
+
+log_name = '/src/logs/server.log'
+logging.basicConfig(filename=log_name,
+                    filemode='a',
+                    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+                    datefmt='%H:%M:%S',
+                    level=logging.DEBUG)
+
+logger = logging.getLogger(__name__)
 
 
 class ModelDeployment:
@@ -195,7 +205,7 @@ class ModelDeployment:
                 request = kwargs["request"]
             else:
                 request = create_generate_request(**kwargs)
-
+            logger.info('deployment request: ' + request)
             response = self.model.generate(request)
 
             if isinstance(response, Exception):

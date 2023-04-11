@@ -1,5 +1,6 @@
 import argparse
 import copy
+import logging
 from typing import List, Union
 
 import torch
@@ -15,6 +16,15 @@ from ..utils import (
     TokenizeRequest,
     TokenizeResponse,
 )
+
+log_name = '/src/logs/server.log'
+logging.basicConfig(filename=log_name,
+                    filemode='a',
+                    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+                    datefmt='%H:%M:%S',
+                    level=logging.DEBUG)
+
+logger = logging.getLogger(__name__)
 
 
 class Model:
@@ -47,7 +57,11 @@ class Model:
     def generate(self, request: GenerateRequest) -> Union[GenerateResponse, Exception]:
         try:
             batch_size = len(request.text)
-
+            logger.info('batch_size: ' + str(batch_size))
+            logger.info('max_batch_size: ' + str(self.max_batch_size))
+            logger.info('request.text: ')
+            for t in request.text:
+                logger.info(t)
             check_batch_size(batch_size, self.max_batch_size)
 
             input_tokens = self.tokenizer(request.text, return_tensors="pt", padding=True)
@@ -62,7 +76,6 @@ class Model:
             num_input_tokens = input_tokens["input_ids"].shape[1]
 
             generation_config = self.get_generation_config(request)
-
             output = self.model.generate(**input_tokens, generation_config=generation_config)
 
             output_tokens = output.sequences
