@@ -3,6 +3,7 @@ Copyright 2022 The Microsoft DeepSpeed Team
 """
 import argparse
 import asyncio
+import json
 import logging
 import subprocess
 import time
@@ -205,7 +206,7 @@ class ModelDeployment:
                 request = kwargs["request"]
             else:
                 request = create_generate_request(**kwargs)
-            logger.info('deployment request: ' + request)
+            logger.info('deployment request: ' + json.dumps(request.get_generate_kwargs()))
             response = self.model.generate(request)
 
             if isinstance(response, Exception):

@@ -319,7 +319,7 @@ def chat_history(session_id):
 def chat():
     logger.info('enter chat endpoint')
     x = request.get_json()
-    logger.info('request: ' + x)
+    logger.info('request: ' + json.dumps(x))
     x = converter_t2s.convert(str(x))
     x = ast.literal_eval(x)
     session_id = x["session_id"]
