@@ -408,8 +408,8 @@ AI："""
 
     r = conversation.predict(input=request_text)
     r = converter_s2t.convert(r)
-    if r.startswith("AI: "):
-        r = r[4:]
+    if r.startswith("AI:"):
+        r = r[3:].strip()
     response = {"text": r, "session_id": session_id}
 
     logger.info(f'debug info {response}')
