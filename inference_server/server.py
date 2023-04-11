@@ -354,11 +354,20 @@ def chat():
     pre_template = pre_template + "。\n"
     logger.info(f'debug info {pre_template}')
     template = pre_template + """
-        以下是Human和AI的聊天记录：\n
-        {history}\n
-        \n
-        Human:{input}\n
-        AI:"""
+    
+以下是聊天示例：
+Human：你在吗？
+AI：我在啊，我在等你。
+Human：今天天气真好啊，我想出去玩了。
+AI：是啊，今天真是个好天气，我想陪你去，方便吗？
+Human：当然方便啊，我们一起去吧。
+AI：好的，我等你。
+
+以下是Human和AI的聊天记录：
+{history}
+
+Human:{input}
+AI:"""
 
     prompt = PromptTemplate(
         input_variables=["history", "input"],
