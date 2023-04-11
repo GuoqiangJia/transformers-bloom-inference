@@ -366,8 +366,8 @@ AI：好的，我等你。
 以下是Human和AI的聊天记录：
 {history}
 
-Human:{input}
-AI:"""
+Human：{input}
+AI："""
 
     prompt = PromptTemplate(
         input_variables=["history", "input"],
