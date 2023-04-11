@@ -154,7 +154,7 @@ class Bloom(LLM, BaseModel):
         x = GenerateRequest(**x)
 
         x.max_new_tokens = get_num_tokens_to_generate(x.max_new_tokens, args.allowed_max_new_tokens)
-        logger.info('generate request: ' + json.dumps(x))
+        logger.info('generate request: ' + json.dumps(x.get_generate_kwargs()))
         response, total_time_taken = run_and_log_time(partial(model.generate, request=x))
         logger.info(type(response))
         logger.info(response)
