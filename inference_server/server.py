@@ -3,6 +3,7 @@ import os
 from functools import partial
 from typing import Any, List, Dict, Mapping, Optional
 
+import redis
 from flask import Flask, request
 from flask_api import status
 from langchain import PromptTemplate, ConversationChain
@@ -37,7 +38,7 @@ logging.basicConfig(filename=log_name,
 
 logger = logging.getLogger(__name__)
 
-
+redis_pool = redis.ConnectionPool.from_url(redis_url)
 class QueryID(BaseModel):
     generate_query_id: int = 0
     tokenize_query_id: int = 0
@@ -163,21 +164,8 @@ class Bloom(LLM, BaseModel):
 class Profile(object):
 
     def __init__(self, session_id: str,
-                 url: str = redis_url,
                  key_prefix: str = "profile_store:") -> None:
-        try:
-            import redis
-        except ImportError:
-            raise ValueError(
-                "Could not import redis python package. "
-                "Please install it with `pip install redis`."
-            )
-
-        try:
-            self.redis_client = redis.Redis.from_url(url=url)
-        except redis.exceptions.ConnectionError as error:
-            logger.error(error)
-
+        self.redis_client = redis.Redis(connection_pool=redis_pool)
         self.session_id = session_id
         self.key_prefix = key_prefix
 
@@ -299,9 +287,32 @@ def profile():
     x = converter_t2s.convert(str(x))
     x = ast.literal_eval(x)
     session_id = x["session_id"]
-    profile = Profile(session_id, url=redis_url)
+    profile = Profile(session_id)
     profile.set(x)
     return profile.values, status.HTTP_200_OK
+
+
+@app.route("/profiles/", methods=["GET"])
+def profiles():
+    redis_client = redis.Redis(connection_pool=redis_pool)
+    keys = redis_client.keys('profile_store*')
+    data = {}
+    for key in keys:
+        value = redis_client.get(key)
+        if value:
+            data[key.decode()] = json.loads(value.decode())
+
+    return data
+
+
+@app.route("/history/<session_id>", methods=["GET"])
+def chat_history(session_id):
+    redis_client = redis.Redis(connection_pool=redis_pool)
+    message_store_key = f'message_store:{session_id}'.encode(encoding='utf-8')
+
+    value = redis_client.lrange(message_store_key, 0, -1)
+    items = [json.loads(m.decode("utf-8")) for m in value[::-1]]
+    return items
 
 
 @app.route("/chat/", methods=["POST"])
@@ -322,7 +333,7 @@ def chat():
     request_text = request_text[0]
     logger.info(f'debug info {request_text}')
 
-    profile = Profile(session_id, url=redis_url)
+    profile = Profile(session_id)
     logger.info(f'debug info {profile}')
 
     profile_values = json.loads(profile.values.decode("utf-8"))
