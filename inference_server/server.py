@@ -148,10 +148,11 @@ class Bloom(LLM, BaseModel):
             "num_beams": self.num_beams,
             "length_penalty": self.length_penalty,
             "num_return_sequences": self.num_return_sequences,
-            "min_length": self.min_length
+            "min_length": self.min_length,
+            "do_sample": self.do_sample
         }
 
-        logger.info('_call x: ' + json.dumps(x))
+        logger.info('_call x: ' + json.dumps(x, ensure_ascii=False, indent=4))
         x = GenerateRequest(**x)
 
         x.max_new_tokens = get_num_tokens_to_generate(x.max_new_tokens, args.allowed_max_new_tokens)
@@ -353,9 +354,10 @@ def chat():
     pre_template = pre_template + "。\n"
     logger.info(f'debug info {pre_template}')
     template = pre_template + """
-
-        {history}
-        Human: {input}
+        以下是Human和AI的聊天记录：\n
+        {history}\n
+        \n
+        Human:{input}\n
         AI:"""
 
     prompt = PromptTemplate(
@@ -369,15 +371,15 @@ def chat():
 
     llm = Bloom()
     logger.info(x)
-    temperature = 1 if 'temperature' not in x else x['temperature']
-    top_k = 100 if 'top_k' not in x else x['top_k']
-    top_p = 1 if 'top_p' not in x else x['top_p']
-    max_new_tokens = 100 if 'max_new_tokens' not in x else x['max_new_tokens']
-    repetition_penalty = 3 if 'repetition_penalty' not in x else x['repetition_penalty']
+    temperature = 0.99 if 'temperature' not in x else x['temperature']
+    top_k = 92 if 'top_k' not in x else x['top_k']
+    top_p = 0.83 if 'top_p' not in x else x['top_p']
+    max_new_tokens = 40 if 'max_new_tokens' not in x else x['max_new_tokens']
+    repetition_penalty = 2.68 if 'repetition_penalty' not in x else x['repetition_penalty']
     num_beams = 1 if 'num_beams' not in x else x['num_beams']
     length_penalty = 1.0 if 'length_penalty' not in x else x['length_penalty']
     num_return_sequences = 1 if 'num_return_sequences' not in x else x['num_return_sequences']
-    min_length = 1 if 'min_length' not in x else x['min_length']
+    min_length = 2 if 'min_length' not in x else x['min_length']
     llm.replace_params({'temperature': temperature, "top_k": top_k, "top_p": top_p,
                      "max_new_tokens": max_new_tokens, "repetition_penalty": repetition_penalty,
                      "num_beams": num_beams, "length_penalty": length_penalty,
