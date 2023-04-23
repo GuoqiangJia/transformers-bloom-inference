@@ -84,7 +84,8 @@ And I did that 4 days ago, when I nominated Circuit Court of Appeals Judge Ketan
     def search(self, query: str, index_name):
         rds = Redis.from_existing_index(embedding=self.huggingEmbedding, redis_url=redis_url, index_name=index_name)
         results = rds.similarity_search(query)
-        print(results[0].page_content)
+        print(results[0])
+        return results[0].page_content
 
 
 if __name__ == '__main__':
