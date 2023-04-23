@@ -426,7 +426,7 @@ AI："""
 
 
 @app.route("/speeches/qa", methods=["POST"])
-def chat():
+def speach_qa():
     logger.info('enter /speeches/qa endpoint')
     x = request.get_json()
     query = x["text"]
