@@ -47,20 +47,26 @@ class RedisEmbedding(EmbeddingDir):
 
     def embedding(self):
         all_files = glob.glob(self.directory + "/*.csv")
-        all_docs = []
-        for filename in all_files[0:1]:
+        df_list = []
+        for filename in all_files:
             logger.info('Handling ' + filename)
             with open(filename, 'r', encoding='utf-8') as f:
-                df = pd.read_csv(filename, index_col=None, header=0, usecols=['fileName', 'audioText'])
-                for index, row in df.iterrows():
-                    title = row['fileName']
-                    audio_text = row['audioText']
-                    texts = self.text_splitter.split_text(audio_text)
-                    docs = [Document(page_content=t, metadatas={"source": f"{title}-{i}-pl"}) for i, t in
-                            enumerate(texts)]
-                    logger.info('Chunk size ' + str(len(docs)))
+                df = pd.read_csv(filename, index_col=None, header=0, usecols=['id', 'fileName', 'audioText'])
+                df_list.append(df)
+        df = pd.concat(df_list, axis=0, ignore_index=True).sort_values('id')
 
-                    all_docs = all_docs + docs
+        all_docs = []
+        df = df.head(10)
+        for index, row in df.iterrows():
+            title = row['fileName']
+            audio_text = title + '.' + row['audioText']
+            texts = self.text_splitter.split_text(audio_text)
+            docs = [Document(page_content=t, metadatas={"source": f"{title}-{i}-pl"}) for i, t in
+                    enumerate(texts)]
+            logger.info('Chunk size ' + str(len(docs)))
+
+            all_docs = all_docs + docs
+
         search_index = Redis.from_documents(documents=all_docs, embedding=self.huggingEmbedding,
                                             redis_url=redis_url, index_name=self.index_name)
         return search_index
@@ -90,4 +96,6 @@ And I did that 4 days ago, when I nominated Circuit Court of Appeals Judge Ketan
 
 if __name__ == '__main__':
     em = RedisEmbedding('../it_frame_llms/corpus/audio_summary_pegasuslarge')
-    print(em.search("What did the president say about Ketanji Brown Jackson", 'test_index'))
+    em.embedding()
+    # print(em.search("What did the president say about Ketanji Brown Jackson", 'test_index'))
+
