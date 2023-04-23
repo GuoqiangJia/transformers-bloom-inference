@@ -89,4 +89,4 @@ And I did that 4 days ago, when I nominated Circuit Court of Appeals Judge Ketan
 
 if __name__ == '__main__':
     em = RedisEmbedding('../it_frame_llms/corpus/audio_summary_pegasuslarge')
-    em.embedding_test()
+    print(em.search("What did the president say about Ketanji Brown Jackson", 'test_index'))
