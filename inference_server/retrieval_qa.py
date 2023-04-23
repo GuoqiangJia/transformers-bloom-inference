@@ -87,15 +87,38 @@ And I did that 4 days ago, when I nominated Circuit Court of Appeals Judge Ketan
                                             redis_url=redis_url, index_name='test_index')
         return search_index
 
-    def search(self, query: str, index_name):
-        rds = Redis.from_existing_index(embedding=self.huggingEmbedding, redis_url=redis_url, index_name=index_name)
+
+class EmbeddingSearch(ABC):
+
+    def __init__(self, index_name: str) -> None:
+        super().__init__()
+        self.index_name = index_name
+
+    @abstractmethod
+    def search(self, query: str):
+        """embedding all files under the directory"""
+
+
+class RedisEmbeddingSearch(EmbeddingSearch):
+
+    def __init__(self, index_name: str) -> None:
+        super().__init__(index_name)
+        self.huggingEmbedding = HuggingFaceInstructEmbeddings()
+
+    def search(self, query: str):
+        rds = Redis.from_existing_index(embedding=self.huggingEmbedding, redis_url=redis_url,
+                                        index_name=self.index_name)
         results = rds.similarity_search(query)
-        print(results[0])
+        if not results:
+            return ''
+
         return results[0].page_content
 
 
-if __name__ == '__main__':
-    em = RedisEmbedding('../it_frame_llms/corpus/audio_summary_pegasuslarge')
-    em.embedding()
-    # print(em.search("What did the president say about Ketanji Brown Jackson", 'test_index'))
+# if __name__ == '__main__':
+#     search = RedisEmbeddingSearch('tom-speeches-vectors')
+#     search.search('')
+# em = RedisEmbedding('../it_frame_llms/corpus/audio_summary_pegasuslarge')
+# em.embedding()
+# print(em.search("What did the president say about Ketanji Brown Jackson", 'test_index'))
 

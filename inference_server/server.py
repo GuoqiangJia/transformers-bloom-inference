@@ -24,6 +24,7 @@ from .utils import (
     parse_bool,
     run_and_log_time,
 )
+from .retrieval_qa import RedisEmbeddingSearch
 
 import opencc
 import ast
@@ -422,6 +423,18 @@ AI："""
 
     logger.info(f'debug info {response}')
     return response, status.HTTP_200_OK
+
+
+@app.route("/speeches/qa", methods=["POST"])
+def chat():
+    logger.info('enter /speeches/qa endpoint')
+    x = request.get_json()
+    query = x["text"]
+    search = RedisEmbeddingSearch('tom-speeches-vectors')
+    result = search.search(query)
+    logger.info(query)
+    logger.info(result)
+    return result
 
 
 @app.route("/hello/", methods=["GET"])
