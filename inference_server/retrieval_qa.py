@@ -32,7 +32,6 @@ class RedisEmbedding(EmbeddingDir):
 
         self.text_splitter = SpacyTextSplitter(pipeline=spacy_pipeline)
         self.huggingEmbedding = HuggingFaceInstructEmbeddings()
-        self.redis_url = constants.redis_url
 
     def embedding(self):
         all_files = glob.glob(self.directory + "/*.csv")
@@ -41,7 +40,7 @@ class RedisEmbedding(EmbeddingDir):
                 texts = self.text_splitter.split_text(f.read())
                 docs = [Document(page_content=t, metadatas={"source": f"{filename}-{i}-pl"}) for i, t in
                         enumerate(texts)]
-        search_index = Redis(redis_url=self.redis_url).add_documents(docs, embeddings=self.huggingEmbedding)
+        search_index = Redis(redis_url=redis_url).add_documents(docs, embeddings=self.huggingEmbedding)
         print(search_index)
         return search_index
 
