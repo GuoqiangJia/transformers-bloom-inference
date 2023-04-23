@@ -9,7 +9,7 @@ from langchain.embeddings import HuggingFaceInstructEmbeddings
 from redis_fix import Redis
 from constants import redis_url
 
-log_name = '/src/logs/qa.log'
+log_name = '../qa.log'
 logging.basicConfig(filename=log_name,
                     filemode='a',
                     format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
