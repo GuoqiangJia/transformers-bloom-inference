@@ -35,12 +35,14 @@ class RedisEmbedding(EmbeddingDir):
 
     def embedding(self):
         all_files = glob.glob(self.directory + "/*.csv")
+        all_docs = []
         for filename in all_files:
             with open(filename, 'r', encoding='utf-8') as f:
                 texts = self.text_splitter.split_text(f.read())
                 docs = [Document(page_content=t, metadatas={"source": f"{filename}-{i}-pl"}) for i, t in
                         enumerate(texts)]
-        search_index = Redis.from_documents(docs, self.huggingEmbedding, redis_url=redis_url, index_name='retrieval-qa')
+                all_docs = all_docs + docs
+        search_index = Redis.from_documents(all_docs, self.huggingEmbedding, redis_url=redis_url, index_name='retrieval-qa')
         print(search_index)
         return search_index
 
