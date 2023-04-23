@@ -6,8 +6,7 @@ from langchain.schema import Document
 from langchain.text_splitter import CharacterTextSplitter, SpacyTextSplitter
 from langchain.embeddings import HuggingFaceInstructEmbeddings
 from langchain.vectorstores.redis import Redis
-
-from inference_server import constants
+from .constants import redis_url
 
 
 class EmbeddingDir(ABC):
