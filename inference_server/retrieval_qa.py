@@ -2,6 +2,7 @@ import glob
 import logging
 from abc import ABC, abstractmethod
 
+import pandas as pd
 from langchain.chains import RetrievalQAWithSourcesChain
 from langchain.schema import Document
 from langchain.text_splitter import CharacterTextSplitter, SpacyTextSplitter
@@ -48,15 +49,20 @@ class RedisEmbedding(EmbeddingDir):
         all_docs = []
         for filename in all_files[0:1]:
             with open(filename, 'r', encoding='utf-8') as f:
-                texts = self.text_splitter.split_text(f.read())
-                docs = [Document(page_content=t, metadatas={"source": f"{filename}-{i}-pl"}) for i, t in
-                        enumerate(texts)]
-                all_docs = all_docs + docs
-        search_index = Redis.from_documents(all_docs, self.huggingEmbedding, redis_url=redis_url)
+                df = pd.read_csv(filename, index_col=None, header=0, usecols=['fileName', 'audioText'])
+                for index, row in df.iterrows():
+                    title = row['fileName']
+                    audio_text = row['audioText']
+                    texts = self.text_splitter.split_text(audio_text)
+                    docs = [Document(page_content=t, metadatas={"source": f"{title}-{i}-pl"}) for i, t in
+                            enumerate(texts)]
+                    all_docs = all_docs + docs
+        search_index = Redis.from_documents(documents=all_docs, embedding=self.huggingEmbedding,
+                                            redis_url=redis_url, index_name='tom-speeches-vectors')
         print(search_index)
         return search_index
 
 
 if __name__ == '__main__':
-    em = RedisEmbedding('../it_frame_llms/corpus/audio_txt_clean')
+    em = RedisEmbedding('../it_frame_llms/corpus/audio_summary_pegasus')
     em.embedding()
