@@ -429,12 +429,13 @@ AI："""
 def speach_qa():
     logger.info('enter /speeches/qa endpoint')
     x = request.get_json()
-    query = x["text"]
+    query = x["question"]
     search = RedisEmbeddingSearch('tom-speeches-vectors')
     result = search.search(query)
     logger.info(query)
-    logger.info(result)
-    return result
+    response = {"answer": result}
+    logger.info(f'debug info {response}')
+    return response, status.HTTP_200_OK
 
 
 @app.route("/hello/", methods=["GET"])
