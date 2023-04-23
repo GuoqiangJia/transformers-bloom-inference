@@ -42,7 +42,7 @@ RUN pip install torch==1.12.1+cu116 --extra-index-url https://download.pytorch.o
 	OpenCC \
 	redis \
 	accelerate \
-    InstructorEmbedding \
+    instructorembedding \
     pandas \
     --no-cache-dir
 
