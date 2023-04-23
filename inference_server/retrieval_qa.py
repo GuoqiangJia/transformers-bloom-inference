@@ -5,7 +5,8 @@ from langchain.chains import RetrievalQAWithSourcesChain
 from langchain.schema import Document
 from langchain.text_splitter import CharacterTextSplitter, SpacyTextSplitter
 from langchain.embeddings import HuggingFaceInstructEmbeddings
-from langchain.vectorstores.pgvector import PGVector
+from langchain.vectorstores.redis import Redis
+from constants import redis_url
 
 
 class EmbeddingDir(ABC):
@@ -41,8 +42,8 @@ class RedisEmbedding(EmbeddingDir):
                 docs = [Document(page_content=t, metadatas={"source": f"{filename}-{i}-pl"}) for i, t in
                         enumerate(texts)]
                 all_docs = all_docs + docs
-        search_index = PGVector.from_documents(documents=all_docs, embedding=self.huggingEmbedding,
-                                               collection_name='retrieval-qa')
+        search_index = Redis.from_documents(all_docs, self.huggingEmbedding, redis_url=redis_url,
+                                            index_name='retrieval-qa')
         print(search_index)
         return search_index
 
