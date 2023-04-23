@@ -49,5 +49,5 @@ class RedisEmbedding(EmbeddingDir):
 
 
 if __name__ == '__main__':
-    em = RedisEmbedding('../assets/corpus/audio_txt_clean')
+    em = RedisEmbedding('../it_frame_llms/corpus/audio_txt_clean')
     em.embedding()
