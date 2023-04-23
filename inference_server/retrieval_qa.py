@@ -43,6 +43,7 @@ class RedisEmbedding(EmbeddingDir):
 
         self.text_splitter = SpacyTextSplitter(pipeline=spacy_pipeline)
         self.huggingEmbedding = HuggingFaceInstructEmbeddings()
+        self.index_name = 'tom-speeches-vectors'
 
     def embedding(self):
         all_files = glob.glob(self.directory + "/*.csv")
@@ -61,11 +62,31 @@ class RedisEmbedding(EmbeddingDir):
 
                     all_docs = all_docs + docs
         search_index = Redis.from_documents(documents=all_docs, embedding=self.huggingEmbedding,
-                                            redis_url=redis_url, index_name='tom-speeches-vectors')
-        print(search_index)
+                                            redis_url=redis_url, index_name=self.index_name)
         return search_index
+
+    def embedding_test(self):
+        s = """
+Tonight. I call on the Senate to: Pass the Freedom to Vote Act. Pass the John Lewis Voting Rights Act. And while you’re at it, pass the Disclose Act so Americans can know who is funding our elections. 
+
+Tonight, I’d like to honor someone who has dedicated his life to serve this country: Justice Stephen Breyer—an Army veteran, Constitutional scholar, and retiring Justice of the United States Supreme Court. Justice Breyer, thank you for your service. 
+
+One of the most serious constitutional responsibilities a President has is nominating someone to serve on the United States Supreme Court. 
+
+And I did that 4 days ago, when I nominated Circuit Court of Appeals Judge Ketanji Brown Jackson. One of our nation’s top legal minds, who will continue Justice Breyer’s legacy of excellence.
+        """
+        title = 'test'
+        all_docs = [Document(page_content=s, metadatas={"source": f"{title}-{0}-pl"})]
+        search_index = Redis.from_documents(documents=all_docs, embedding=self.huggingEmbedding,
+                                            redis_url=redis_url, index_name='test_index')
+        return search_index
+
+    def search(self, query: str, index_name):
+        rds = Redis.from_existing_index(embedding=self.huggingEmbedding, redis_url=redis_url, index_name=index_name)
+        results = rds.similarity_search(query)
+        print(results[0].page_content)
 
 
 if __name__ == '__main__':
     em = RedisEmbedding('../it_frame_llms/corpus/audio_summary_pegasuslarge')
-    em.embedding()
+    em.embedding_test()
