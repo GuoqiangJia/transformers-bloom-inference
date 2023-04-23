@@ -48,6 +48,7 @@ class RedisEmbedding(EmbeddingDir):
         all_files = glob.glob(self.directory + "/*.csv")
         all_docs = []
         for filename in all_files[0:1]:
+            logger.info('Handling ' + filename)
             with open(filename, 'r', encoding='utf-8') as f:
                 df = pd.read_csv(filename, index_col=None, header=0, usecols=['fileName', 'audioText'])
                 for index, row in df.iterrows():
@@ -56,6 +57,8 @@ class RedisEmbedding(EmbeddingDir):
                     texts = self.text_splitter.split_text(audio_text)
                     docs = [Document(page_content=t, metadatas={"source": f"{title}-{i}-pl"}) for i, t in
                             enumerate(texts)]
+                    logger.info('Chunk size ' + str(len(docs)))
+
                     all_docs = all_docs + docs
         search_index = Redis.from_documents(documents=all_docs, embedding=self.huggingEmbedding,
                                             redis_url=redis_url, index_name='tom-speeches-vectors')
