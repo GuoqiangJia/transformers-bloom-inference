@@ -41,6 +41,9 @@ RUN pip install torch==1.12.1+cu116 --extra-index-url https://download.pytorch.o
 	langchain==0.0.132 \
 	OpenCC \
 	redis \
+	accelerate \
+    InstructorEmbedding \
+    pandas \
     --no-cache-dir
 
 # clean conda env

@@ -3,14 +3,13 @@ import logging
 from abc import ABC, abstractmethod
 
 import pandas as pd
-from langchain.chains import RetrievalQAWithSourcesChain
 from langchain.schema import Document
 from langchain.text_splitter import CharacterTextSplitter, SpacyTextSplitter
 from langchain.embeddings import HuggingFaceInstructEmbeddings
 from redis_fix import Redis
 from constants import redis_url
 
-log_name = '../qa.log'
+log_name = '/src/logs/server.log'
 logging.basicConfig(filename=log_name,
                     filemode='a',
                     format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
