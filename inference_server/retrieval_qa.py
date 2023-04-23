@@ -67,5 +67,5 @@ class RedisEmbedding(EmbeddingDir):
 
 
 if __name__ == '__main__':
-    em = RedisEmbedding('../it_frame_llms/corpus/audio_summary_pegasus')
+    em = RedisEmbedding('../it_frame_llms/corpus/audio_summary_pegasuslarge')
     em.embedding()
