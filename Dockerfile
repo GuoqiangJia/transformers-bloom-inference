@@ -42,8 +42,8 @@ RUN pip install torch==1.12.1+cu116 --extra-index-url https://download.pytorch.o
 	OpenCC \
 	redis==4.5.3 \
 	accelerate==0.18.0 \
-    instructorembedding==1.0.0 \
-    sentence-transformers=2.2.2 \
+    instructorembedding==1.0.0 \K
+    sentence-transformers==2.2.2 \
     pandas==1.5.3 \
     --no-cache-dir
 
