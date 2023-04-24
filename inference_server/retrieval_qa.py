@@ -3,11 +3,13 @@ import logging
 from abc import ABC, abstractmethod
 
 import pandas as pd
+from langchain.chains import RetrievalQAWithSourcesChain
 from langchain.schema import Document
 from langchain.text_splitter import CharacterTextSplitter, SpacyTextSplitter
 from langchain.embeddings import HuggingFaceInstructEmbeddings
 from .redis_fix import Redis
 from .constants import redis_url
+from .server import Bloom
 
 log_name = '/src/logs/server.log'
 logging.basicConfig(filename=log_name,
@@ -107,17 +109,22 @@ class RedisEmbeddingSearch(EmbeddingSearch):
     def search(self, query: str):
         rds = Redis.from_existing_index(embedding=self.huggingEmbedding, redis_url=redis_url,
                                         index_name=self.index_name)
-        results = rds.similarity_search(query)
-        if not results:
-            return ''
+        retriever = rds.as_retriever()
 
-        return results[0].page_content
+        llm = Bloom(temperature=0)
+        chain = RetrievalQAWithSourcesChain.from_chain_type(llm, chain_type="stuff", retriever=retriever)
+        return chain({"question": query}, return_only_outputs=True)
+
+        # results = rds.similarity_search(query)
+        # if not results:
+        #     return ''
+        #
+        # return results[0].page_content
 
 
-# if __name__ == '__main__':
-#     search = RedisEmbeddingSearch('tom-speeches-vectors')
-#     search.search('')
-# em = RedisEmbedding('../it_frame_llms/corpus/audio_summary_pegasuslarge')
-# em.embedding()
-# print(em.search("What did the president say about Ketanji Brown Jackson", 'test_index'))
-
+if __name__ == '__main__':
+    search = RedisEmbeddingSearch('tom-speeches-vectors')
+    search.search("What is a learner's mindset?")
+    # em = RedisEmbedding('../it_frame_llms/corpus/audio_summary_pegasuslarge')
+    # em.embedding()
+    # print(em.search("What did the president say about Ketanji Brown Jackson", 'test_index'))

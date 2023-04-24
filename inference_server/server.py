@@ -1,4 +1,3 @@
-import logging
 import os
 from functools import partial
 from typing import Any, List, Dict, Mapping, Optional
@@ -13,6 +12,7 @@ from pydantic import BaseModel, Extra, root_validator
 
 from .constants import redis_url
 from .constants import HF_ACCELERATE
+from .logger_factory import LoggerFactory
 from .model_handler.deployment import ModelDeployment
 from .utils import (
     ForwardRequest,
@@ -30,16 +30,10 @@ import opencc
 import ast
 import json
 
-log_name = '/src/logs/server.log'
-logging.basicConfig(filename=log_name,
-                    filemode='a',
-                    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
-                    datefmt='%H:%M:%S',
-                    level=logging.DEBUG)
-
-logger = logging.getLogger(__name__)
-
+logger = LoggerFactory.get_logger(__name__, log_level="INFO")
 redis_pool = redis.ConnectionPool.from_url(redis_url)
+
+
 class QueryID(BaseModel):
     generate_query_id: int = 0
     tokenize_query_id: int = 0
@@ -404,10 +398,10 @@ AI："""
     remove_input = True if 'remove_input' not in x else x['remove_input']
     length_no_input = True if 'length_no_input' not in x else x['length_no_input']
     llm.replace_params({'temperature': temperature, "top_k": top_k, "top_p": top_p,
-                     "max_new_tokens": max_new_tokens, "repetition_penalty": repetition_penalty,
-                     "num_beams": num_beams, "length_penalty": length_penalty,
-                     "num_return_sequences": num_return_sequences, "min_length": min_length,
-                     "remove_input": remove_input, "length_no_input": length_no_input})
+                        "max_new_tokens": max_new_tokens, "repetition_penalty": repetition_penalty,
+                        "num_beams": num_beams, "length_penalty": length_penalty,
+                        "num_return_sequences": num_return_sequences, "min_length": min_length,
+                        "remove_input": remove_input, "length_no_input": length_no_input})
 
     conversation = ConversationChain(
         llm=llm,
