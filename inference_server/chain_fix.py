@@ -12,11 +12,16 @@ from langchain.chains.qa_with_sources.map_reduce_prompt import (
     QUESTION_PROMPT,
 )
 
+from inference_server.logger_factory import LoggerFactory
+
+logger = LoggerFactory.get_logger(__name__, log_level="INFO")
+
 
 class PassStuffDocumentsChain(StuffDocumentsChain):
     def combine_docs(self, docs: List[Document], **kwargs: Any) -> Tuple[str, dict]:
         for d in docs:
-            print(d.page_content)
+            logger.info(d.page_content)
+            logger.info(d.metadata)
 
         return None
 

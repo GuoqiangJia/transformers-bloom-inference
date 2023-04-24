@@ -454,8 +454,8 @@ def speach_qa():
     llm = build_bloom_model(x)
 
     # chain = RetrievalQAWithSourcesChain.from_chain_type(llm, chain_type="map_reduce", retriever=retriever)
-
     # combine_prompt = PromptTemplate(template="""Do nothing. Just return what you received.""", input_variables=[])
+
     chain = PassRetrievalQAWithSourcesChain.from_llm(llm, retriever=retriever)
     response = chain({"question": query}, return_only_outputs=False)
 
