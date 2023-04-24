@@ -445,7 +445,7 @@ def speach_qa():
     rds = Redis.from_existing_index(embedding=HuggingFaceInstructEmbeddings(), redis_url=redis_url,
                                     index_name='tom-speeches-vectors')
     retriever = rds.as_retriever()
-    llm = Bloom(temperature=0)
+    llm = Bloom(temperature=0.1)
     chain = RetrievalQAWithSourcesChain.from_chain_type(llm, chain_type="map_reduce",
                                                         retriever=retriever)
     response = chain({"question": query}, return_only_outputs=True)
