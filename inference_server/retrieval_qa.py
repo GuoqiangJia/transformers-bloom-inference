@@ -120,8 +120,8 @@ class RedisEmbeddingSearch(EmbeddingSearch):
 
 
 if __name__ == '__main__':
-    search = RedisEmbeddingSearch('tom-speeches-vectors')
-    search.search("What is a learner's mindset?")
-    # em = RedisEmbedding('../it_frame_llms/corpus/audio_summary_pegasuslarge')
-    # em.embedding()
+    # search = RedisEmbeddingSearch('tom-speeches-vectors')
+    # search.search("What is a learner's mindset?")
+    em = RedisEmbedding('../it_frame_llms/corpus/audio_summary_pegasuslarge')
+    em.embedding()
     # print(em.search("What did the president say about Ketanji Brown Jackson", 'test_index'))
