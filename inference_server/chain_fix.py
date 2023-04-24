@@ -19,11 +19,12 @@ logger = LoggerFactory.get_logger(__name__, log_level="INFO")
 
 class PassStuffDocumentsChain(StuffDocumentsChain):
     def combine_docs(self, docs: List[Document], **kwargs: Any) -> Tuple[str, dict]:
-        for d in docs:
-            logger.info(d.page_content)
-            logger.info(d.metadata)
+        results = ''
+        for i, d in enumerate(docs):
+            results = str(i + 1) + ". " + d.page_content + '\n'
 
-        return None
+        logger.info('Answer: ' + results)
+        return results, {}
 
 
 class PassRetrievalQAWithSourcesChain(RetrievalQAWithSourcesChain):
