@@ -452,8 +452,8 @@ def speach_qa():
     retriever = rds.as_retriever()
     llm = build_bloom_model(x)
     chain = RetrievalQAWithSourcesChain.from_chain_type(llm, chain_type="map_reduce",
-                                                        retriever=retriever)
-    response = chain({"question": query}, return_only_outputs=True)
+                                                        retriever=retriever, return_source_documents=True)
+    response = chain({"question": query}, return_only_outputs=False)
 
     # search = RedisEmbeddingSearch('tom-speeches-vectors')
     # result = search.search(query)
