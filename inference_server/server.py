@@ -344,12 +344,13 @@ def build_bloom_model(x):
     num_return_sequences = 1 if 'num_return_sequences' not in x else x['num_return_sequences']
     min_length = 5 if 'min_length' not in x else x['min_length']
     remove_input = True if 'remove_input' not in x else x['remove_input']
+    do_sample = True if 'do_sample' not in x else x['do_sample']
     length_no_input = True if 'length_no_input' not in x else x['length_no_input']
     llm.replace_params({'temperature': temperature, "top_k": top_k, "top_p": top_p,
                         "max_new_tokens": max_new_tokens, "repetition_penalty": repetition_penalty,
                         "num_beams": num_beams, "length_penalty": length_penalty,
                         "num_return_sequences": num_return_sequences, "min_length": min_length,
-                        "remove_input": remove_input, "length_no_input": length_no_input})
+                        "do_sample": do_sample, "remove_input": remove_input, "length_no_input": length_no_input})
     return llm
 
 
