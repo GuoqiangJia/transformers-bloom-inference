@@ -6,8 +6,8 @@ import pandas as pd
 from langchain.schema import Document
 from langchain.text_splitter import SpacyTextSplitter
 from langchain.embeddings import HuggingFaceInstructEmbeddings
-from .redis_fix import Redis
-from .constants import redis_url
+from redis_fix import Redis
+from constants import redis_url
 
 log_name = '../server.log'
 logging.basicConfig(filename=log_name,
