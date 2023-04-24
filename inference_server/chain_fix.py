@@ -19,7 +19,7 @@ logger = LoggerFactory.get_logger(__name__, log_level="INFO")
 
 class PassStuffDocumentsChain(StuffDocumentsChain):
     def combine_docs(self, docs: List[Document], **kwargs: Any) -> Tuple[str, dict]:
-        results = ''
+        results = '\n'
         for i, d in enumerate(docs):
             results = results + str(i + 1) + ". " + d.page_content + '\n'
 
