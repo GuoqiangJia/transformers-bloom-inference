@@ -332,6 +332,27 @@ def chat_history(session_id):
     return items
 
 
+def build_bloom_model(x):
+    llm = Bloom()
+    temperature = 0.99 if 'temperature' not in x else x['temperature']
+    top_k = 92 if 'top_k' not in x else x['top_k']
+    top_p = 0.83 if 'top_p' not in x else x['top_p']
+    max_new_tokens = 40 if 'max_new_tokens' not in x else x['max_new_tokens']
+    repetition_penalty = 2.68 if 'repetition_penalty' not in x else x['repetition_penalty']
+    num_beams = 1 if 'num_beams' not in x else x['num_beams']
+    length_penalty = 1.0 if 'length_penalty' not in x else x['length_penalty']
+    num_return_sequences = 1 if 'num_return_sequences' not in x else x['num_return_sequences']
+    min_length = 5 if 'min_length' not in x else x['min_length']
+    remove_input = True if 'remove_input' not in x else x['remove_input']
+    length_no_input = True if 'length_no_input' not in x else x['length_no_input']
+    llm.replace_params({'temperature': temperature, "top_k": top_k, "top_p": top_p,
+                        "max_new_tokens": max_new_tokens, "repetition_penalty": repetition_penalty,
+                        "num_beams": num_beams, "length_penalty": length_penalty,
+                        "num_return_sequences": num_return_sequences, "min_length": min_length,
+                        "remove_input": remove_input, "length_no_input": length_no_input})
+    return llm
+
+
 @app.route("/chat/", methods=["POST"])
 def chat():
     logger.info('enter chat endpoint')
@@ -401,25 +422,8 @@ AI："""
     history = RedisChatMessageHistory(session_id=session_id, url=redis_url)
     memory = ConversationBufferMemory(memory_key="history", input_key="input", chat_memory=history)
     logger.info(f'debug info {memory.buffer}')
-
-    llm = Bloom()
     logger.info(x)
-    temperature = 0.99 if 'temperature' not in x else x['temperature']
-    top_k = 92 if 'top_k' not in x else x['top_k']
-    top_p = 0.83 if 'top_p' not in x else x['top_p']
-    max_new_tokens = 40 if 'max_new_tokens' not in x else x['max_new_tokens']
-    repetition_penalty = 2.68 if 'repetition_penalty' not in x else x['repetition_penalty']
-    num_beams = 1 if 'num_beams' not in x else x['num_beams']
-    length_penalty = 1.0 if 'length_penalty' not in x else x['length_penalty']
-    num_return_sequences = 1 if 'num_return_sequences' not in x else x['num_return_sequences']
-    min_length = 5 if 'min_length' not in x else x['min_length']
-    remove_input = True if 'remove_input' not in x else x['remove_input']
-    length_no_input = True if 'length_no_input' not in x else x['length_no_input']
-    llm.replace_params({'temperature': temperature, "top_k": top_k, "top_p": top_p,
-                        "max_new_tokens": max_new_tokens, "repetition_penalty": repetition_penalty,
-                        "num_beams": num_beams, "length_penalty": length_penalty,
-                        "num_return_sequences": num_return_sequences, "min_length": min_length,
-                        "remove_input": remove_input, "length_no_input": length_no_input})
+    llm = build_bloom_model(x)
 
     conversation = ConversationChain(
         llm=llm,
@@ -445,7 +449,7 @@ def speach_qa():
     rds = Redis.from_existing_index(embedding=HuggingFaceInstructEmbeddings(), redis_url=redis_url,
                                     index_name='tom-speeches-vectors')
     retriever = rds.as_retriever()
-    llm = Bloom(temperature=0.1)
+    llm = build_bloom_model(x)
     chain = RetrievalQAWithSourcesChain.from_chain_type(llm, chain_type="map_reduce",
                                                         retriever=retriever)
     response = chain({"question": query}, return_only_outputs=True)
