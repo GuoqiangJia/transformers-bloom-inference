@@ -6,8 +6,11 @@ import redis
 from flask import Flask, request
 from flask_api import status
 from langchain import PromptTemplate, ConversationChain
+from langchain.chains import RetrievalQAWithSourcesChain
+from langchain.embeddings import HuggingFaceInstructEmbeddings
 from langchain.llms.base import LLM
 from langchain.memory import RedisChatMessageHistory, ConversationBufferMemory
+from langchain.vectorstores.redis import Redis
 from pydantic import BaseModel, Extra, root_validator
 
 from .constants import redis_url
@@ -24,7 +27,6 @@ from .utils import (
     parse_bool,
     run_and_log_time,
 )
-from .retrieval_qa import RedisEmbeddingSearch
 
 import opencc
 import ast
@@ -184,6 +186,22 @@ class Profile(object):
     def clear(self) -> None:
         """Clear session memory from Redis"""
         self.redis_client.delete(self.key)
+
+
+class RedisEmbeddingSearch(object):
+
+    def __init__(self, index_name: str) -> None:
+        self.index_name = index_name
+        self.huggingEmbedding = HuggingFaceInstructEmbeddings()
+
+    def search(self, query: str):
+        rds = Redis.from_existing_index(embedding=self.huggingEmbedding, redis_url=redis_url,
+                                        index_name=self.index_name)
+        retriever = rds.as_retriever()
+
+        llm = Bloom(temperature=0)
+        chain = RetrievalQAWithSourcesChain.from_chain_type(llm, chain_type="stuff", retriever=retriever)
+        return chain({"question": query}, return_only_outputs=True)
 
 
 # placeholder class for getting args. gunicorn does not allow passing args to a
@@ -424,10 +442,18 @@ def speach_qa():
     logger.info('enter /speeches/qa endpoint')
     x = request.get_json()
     query = x["question"]
-    search = RedisEmbeddingSearch('tom-speeches-vectors')
-    result = search.search(query)
-    logger.info(query)
-    response = {"answer": result}
+    rds = Redis.from_existing_index(embedding=HuggingFaceInstructEmbeddings(), redis_url=redis_url,
+                                    index_name='tom-speeches-vectors')
+    retriever = rds.as_retriever()
+    llm = Bloom(temperature=0)
+    chain = RetrievalQAWithSourcesChain.from_chain_type(llm, chain_type="stuff", retriever=retriever)
+    response = chain({"question": query}, return_only_outputs=True)
+
+    # search = RedisEmbeddingSearch('tom-speeches-vectors')
+    # result = search.search(query)
+    # logger.info(query)
+    # response = {"answer": result}
+
     logger.info(f'debug info {response}')
     return response, status.HTTP_200_OK
 
