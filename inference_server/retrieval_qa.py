@@ -109,17 +109,16 @@ class RedisEmbeddingSearch(EmbeddingSearch):
     def search(self, query: str):
         rds = Redis.from_existing_index(embedding=self.huggingEmbedding, redis_url=redis_url,
                                         index_name=self.index_name)
-        retriever = rds.as_retriever()
+        # retriever = rds.as_retriever()
+        # llm = Bloom(temperature=0)
+        # chain = RetrievalQAWithSourcesChain.from_chain_type(llm, chain_type="stuff", retriever=retriever)
+        # return chain({"question": query}, return_only_outputs=True)
 
-        llm = Bloom(temperature=0)
-        chain = RetrievalQAWithSourcesChain.from_chain_type(llm, chain_type="stuff", retriever=retriever)
-        return chain({"question": query}, return_only_outputs=True)
-
-        # results = rds.similarity_search(query)
-        # if not results:
-        #     return ''
-        #
-        # return results[0].page_content
+        results = rds.similarity_search(query)
+        if not results:
+            return ''
+        logger.info(results)
+        return results[0].page_content
 
 
 if __name__ == '__main__':
