@@ -452,7 +452,7 @@ def speach_qa():
     retriever = rds.as_retriever()
     llm = build_bloom_model(x)
 
-    combine_prompt = BasePromptTemplate(template="""Do nothing. Just return what you received.""")
+    combine_prompt = PromptTemplate(template="""Do nothing. Just return what you received.""")
     chain = RetrievalQAWithSourcesChain.from_chain_type(llm, chain_type="map_reduce", retriever=retriever,
                                                         combine_prompt=combine_prompt)
     response = chain({"question": query}, return_only_outputs=False)
