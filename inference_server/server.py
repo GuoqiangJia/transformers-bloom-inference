@@ -5,7 +5,7 @@ from typing import Any, List, Dict, Mapping, Optional
 import redis
 from flask import Flask, request
 from flask_api import status
-from langchain import PromptTemplate, ConversationChain, BasePromptTemplate
+from langchain import PromptTemplate, ConversationChain
 from langchain.chains import RetrievalQAWithSourcesChain
 from langchain.embeddings import HuggingFaceInstructEmbeddings
 from langchain.llms.base import LLM
@@ -13,6 +13,7 @@ from langchain.memory import RedisChatMessageHistory, ConversationBufferMemory
 from langchain.vectorstores.redis import Redis
 from pydantic import BaseModel, Extra, root_validator
 
+from .chain_fix import PassRetrievalQAWithSourcesChain
 from .constants import redis_url
 from .constants import HF_ACCELERATE
 from .logger_factory import LoggerFactory
@@ -454,8 +455,8 @@ def speach_qa():
 
     # chain = RetrievalQAWithSourcesChain.from_chain_type(llm, chain_type="map_reduce", retriever=retriever)
 
-    # question_prompt = PromptTemplate(template="""Do nothing. Just return what you received.""", input_variables=[])
-    chain = RetrievalQAWithSourcesChain.from_llm(llm, retriever=retriever)
+    # combine_prompt = PromptTemplate(template="""Do nothing. Just return what you received.""", input_variables=[])
+    chain = PassRetrievalQAWithSourcesChain.from_llm(llm, retriever=retriever)
     response = chain({"question": query}, return_only_outputs=False)
 
     # search = RedisEmbeddingSearch('tom-speeches-vectors')
