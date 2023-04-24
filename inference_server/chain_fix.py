@@ -21,7 +21,7 @@ class PassStuffDocumentsChain(StuffDocumentsChain):
     def combine_docs(self, docs: List[Document], **kwargs: Any) -> Tuple[str, dict]:
         results = ''
         for i, d in enumerate(docs):
-            results = str(i + 1) + ". " + d.page_content + '\n'
+            results = results + str(i + 1) + ". " + d.page_content + '\n'
 
         logger.info('Answer: ' + results)
         return results, {}
