@@ -3,13 +3,11 @@ import logging
 from abc import ABC, abstractmethod
 
 import pandas as pd
-from langchain.chains import RetrievalQAWithSourcesChain
 from langchain.schema import Document
-from langchain.text_splitter import CharacterTextSplitter, SpacyTextSplitter
+from langchain.text_splitter import SpacyTextSplitter
 from langchain.embeddings import HuggingFaceInstructEmbeddings
 from .redis_fix import Redis
 from .constants import redis_url
-from .server import Bloom
 
 log_name = '/src/logs/server.log'
 logging.basicConfig(filename=log_name,
