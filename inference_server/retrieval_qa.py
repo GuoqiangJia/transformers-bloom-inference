@@ -60,7 +60,7 @@ class RedisEmbedding(EmbeddingDir):
             title = row['fileName']
             audio_text = title + '.' + row['audioText']
             texts = self.text_splitter.split_text(audio_text)
-            docs = [Document(page_content=t, metadatas={"source": f"{title}-{i}-pl"}) for i, t in
+            docs = [Document(page_content=t, metadata={"source": f"{title}-{i}-pl"}) for i, t in
                     enumerate(texts)]
             logger.info('Chunk size ' + str(len(docs)))
 
