@@ -452,11 +452,10 @@ def speach_qa():
     retriever = rds.as_retriever()
     llm = build_bloom_model(x)
 
-    question_prompt = PromptTemplate(template="""Do nothing. Just return what you received.""", input_variables=[])
-    # chain = RetrievalQAWithSourcesChain.from_chain_type(llm, chain_type="map_reduce", retriever=retriever,
-    #                                                     combine_prompt=combine_prompt)
+    chain = RetrievalQAWithSourcesChain.from_chain_type(llm, chain_type="map_reduce", retriever=retriever)
 
-    chain = RetrievalQAWithSourcesChain.from_llm(llm, question_prompt=question_prompt, retriever=retriever)
+    # question_prompt = PromptTemplate(template="""Do nothing. Just return what you received.""", input_variables=[])
+    # chain = RetrievalQAWithSourcesChain.from_llm(llm, question_prompt=question_prompt, retriever=retriever)
     response = chain({"question": query}, return_only_outputs=False)
 
     # search = RedisEmbeddingSearch('tom-speeches-vectors')
